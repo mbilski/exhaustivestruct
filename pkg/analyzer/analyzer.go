@@ -2,6 +2,7 @@ package analyzer
 
 import (
 	"go/ast"
+	"go/types"
 
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
@@ -24,28 +25,56 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	}
 
 	inspector.Preorder(nodeFilter, func(node ast.Node) {
+		var name string
+
 		compositeLit := node.(*ast.CompositeLit)
 
-		ident, ok := compositeLit.Type.(*ast.Ident)
+		i, ok := compositeLit.Type.(*ast.Ident)
+
+		if ok {
+			name = i.Name
+		} else {
+			s, ok := compositeLit.Type.(*ast.SelectorExpr)
+
+			if ok {
+				name = s.Sel.Name
+			}
+		}
+
+		t := pass.TypesInfo.TypeOf(compositeLit.Type)
+
+		if t == nil {
+			return
+		}
+
+		str, ok := t.Underlying().(*types.Struct)
 
 		if !ok {
 			return
 		}
 
-		tSpec, ok := ident.Obj.Decl.(*ast.TypeSpec)
-
-		if !ok {
+		if len(compositeLit.Elts) == 0 {
 			return
 		}
 
-		sType, ok := tSpec.Type.(*ast.StructType)
+		for i := 0; i < str.NumFields(); i++ {
+			fieldName := str.Field(i).Name()
+			exists := false
 
-		if !ok {
-			return
-		}
+			for _, e := range compositeLit.Elts {
+				if k, ok := e.(*ast.KeyValueExpr); ok {
+					if i, ok := k.Key.(*ast.Ident); ok {
+						if i.Name == fieldName {
+							exists = true
+							break
+						}
+					}
+				}
+			}
 
-		if sType.Fields.NumFields() != len(compositeLit.Elts) {
-			pass.Reportf(node.Pos(), "missing fields")
+			if !exists {
+				pass.Reportf(node.Pos(), "%s is missing in %s", fieldName, name)
+			}
 		}
 	})
 
