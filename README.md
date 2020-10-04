@@ -2,7 +2,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/mbilski/exhaustivestruct)](https://goreportcard.com/badge/github.com/mbilski/exhaustivestruct)
 
-exhaustivestruct is a go static analysis tool to find structs that have uninitialized fields.
+exhaustivestruct is a go static analysis tool to find structs that have some, but no all, initialized fields.
 
 ## Installation
 
