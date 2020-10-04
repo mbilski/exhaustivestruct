@@ -36,9 +36,11 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		} else {
 			s, ok := compositeLit.Type.(*ast.SelectorExpr)
 
-			if ok {
-				name = s.Sel.Name
+			if !ok {
+				return
 			}
+
+			name = s.Sel.Name
 		}
 
 		t := pass.TypesInfo.TypeOf(compositeLit.Type)
