@@ -10,6 +10,7 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+// Analyzer that checks if all struct's fields are initialized
 var Analyzer = &analysis.Analyzer{
 	Name:     "exhaustivestruct",
 	Doc:      "Checks if all struct's fields are initialized",
