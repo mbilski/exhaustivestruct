@@ -44,6 +44,10 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			name = s.Sel.Name
 		}
 
+		if compositeLit.Type == nil {
+			return
+		}
+
 		t := pass.TypesInfo.TypeOf(compositeLit.Type)
 
 		if t == nil {
