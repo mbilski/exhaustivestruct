@@ -6,6 +6,7 @@ type Embedded struct {
 	E string
 	F string
 	g string
+	H string
 }
 
 type Test struct {
@@ -38,6 +39,7 @@ func shouldPass2() Test2 {
 		Embedded: Embedded{
 			E: "",
 			F: "",
+			H: "",
 		},
 	}
 }
@@ -52,7 +54,7 @@ func shouldFailWithMissingFields() Test {
 
 func shouldFailOnEmbedded() Test2 {
 	return Test2{
-		Embedded: Embedded{ // want "E is missing in Embedded"
+		Embedded: Embedded{ // want "E, H are missing in Embedded"
 			F: "",
 		},
 		External: e.External{
@@ -70,6 +72,7 @@ func shoildFailOnExternal() Test2 {
 		Embedded: Embedded{
 			E: "",
 			F: "",
+			H: "",
 		},
 	}
 }
