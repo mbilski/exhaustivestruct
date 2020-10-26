@@ -5,6 +5,7 @@ import "e"
 type Embedded struct {
 	E string
 	F string
+	g string
 }
 
 type Test struct {

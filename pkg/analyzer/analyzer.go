@@ -68,6 +68,10 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			fieldName := str.Field(i).Name()
 			exists := false
 
+			if !str.Field(i).Exported() {
+				continue
+			}
+
 			for _, e := range compositeLit.Elts {
 				if k, ok := e.(*ast.KeyValueExpr); ok {
 					if i, ok := k.Key.(*ast.Ident); ok {
