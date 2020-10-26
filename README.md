@@ -4,6 +4,9 @@
 
 exhaustivestruct is a go static analysis tool to find structs that have some, but no all, initialized fields.
 
+> :warning: This linter is meant to be used only for special cases.
+> It is not recommended to use it for all files in a project.
+
 ## Installation
 
 ```
