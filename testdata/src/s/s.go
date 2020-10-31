@@ -1,6 +1,9 @@
 package s
 
-import "e"
+import (
+	"e"
+	"fmt"
+)
 
 type Embedded struct {
 	E string
@@ -42,6 +45,20 @@ func shouldPass2() Test2 {
 			H: "",
 		},
 	}
+}
+
+func shouldPassWithReturn() (Test, error) {
+	// Empty structs in return statements are ignored if also returning an error
+	return Test{}, fmt.Errorf("error")
+}
+func shouldPass3() {
+	// Checking to make sure state from tracking the previous return statement doesn't affect this struct
+	_ = Test{} // want "A, B, C, D are missing in Test"
+}
+
+func shouldFailWithReturn() (Test, error) {
+	// Empty structs in return statements are not ignored if returning nil error
+	return Test{}, nil // want "A, B, C, D are missing in Test"
 }
 
 func shouldFailWithMissingFields() Test {
