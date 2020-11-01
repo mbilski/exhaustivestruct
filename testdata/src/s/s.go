@@ -52,6 +52,19 @@ func shouldFailWithMissingFields() Test {
 	}
 }
 
+// Unchecked is a struct not listed in StructPatternList
+type Unchecked struct {
+	A int
+	B int
+}
+
+func unchecked() {
+	// This struct is not listed in StructPatternList so the linter won't complain that it's not filled out
+	_ = Unchecked{
+		A: 1,
+	}
+}
+
 func shouldFailOnEmbedded() Test2 {
 	return Test2{
 		Embedded: Embedded{ // want "E, H are missing in Embedded"
