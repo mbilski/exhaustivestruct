@@ -1,8 +1,11 @@
 package analyzer
 
 import (
+	"flag"
+	"fmt"
 	"go/ast"
 	"go/types"
+	"path"
 	"strings"
 
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -17,10 +20,31 @@ var Analyzer = &analysis.Analyzer{
 	Doc:      "Checks if all struct's fields are initialized",
 	Run:      run,
 	Requires: []*analysis.Analyzer{inspect.Analyzer},
+	Flags:    newFlagSet(),
+}
+
+// StructPatternList is a comma separated list of expressions to match struct packages and names
+// The struct packages have the form example.com/package.ExampleStruct
+// The matching patterns can use matching syntax from https://pkg.go.dev/path#Match
+// If this list is empty, all structs are tested.
+var StructPatternList string
+
+func newFlagSet() flag.FlagSet {
+	fs := flag.NewFlagSet("", flag.PanicOnError)
+	fs.StringVar(&StructPatternList, "struct_patterns", "", "This is a comma separated list of expressions to match struct packages and names")
+	return *fs
 }
 
 func run(pass *analysis.Pass) (interface{}, error) {
 	inspector := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
+	structPatterns := strings.Split(StructPatternList, ",")
+	// validate the pattern syntax
+	for _, pattern := range structPatterns {
+		_, err := path.Match(pattern, "")
+		if err != nil {
+			return nil, fmt.Errorf("invalid struct pattern %s: %w", pattern, err)
+		}
+	}
 
 	nodeFilter := []ast.Node{
 		(*ast.CompositeLit)(nil),
@@ -64,6 +88,20 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 		if t == nil {
 			return
+		}
+
+		if len(structPatterns) > 0 {
+			shouldLint := false
+			for _, pattern := range structPatterns {
+				// We check the patterns for vailidy ahead of time, so we don't need to check the error here
+				if match, _ := path.Match(pattern, t.String()); match {
+					shouldLint = true
+					break
+				}
+			}
+			if !shouldLint {
+				return
+			}
 		}
 
 		str, ok := t.Underlying().(*types.Struct)

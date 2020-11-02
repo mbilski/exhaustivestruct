@@ -16,5 +16,6 @@ func TestAll(t *testing.T) {
 	}
 
 	testdata := filepath.Join(filepath.Dir(filepath.Dir(wd)), "testdata")
+	analyzer.StructPatternList = "*.Test,*.Test2,*.Embedded,*.External"
 	analysistest.Run(t, testdata, analyzer.Analyzer, "s")
 }
