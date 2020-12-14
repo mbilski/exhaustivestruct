@@ -36,8 +36,9 @@ func newFlagSet() flag.FlagSet {
 }
 
 func run(pass *analysis.Pass) (interface{}, error) {
+	splitFn := func(c rune) bool { return c == ',' }
 	inspector := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
-	structPatterns := strings.Split(StructPatternList, ",")
+	structPatterns := strings.FieldsFunc(StructPatternList, splitFn)
 	// validate the pattern syntax
 	for _, pattern := range structPatterns {
 		_, err := path.Match(pattern, "")
@@ -117,11 +118,13 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		if len(compositeLit.Elts) == 0 {
 			// Check if this composite is one of the results the last return statement
 			isInResults := false
-			for _, result := range returnStmt.Results {
-				compareComposite, ok := result.(*ast.CompositeLit)
-				if ok {
-					if compareComposite == compositeLit {
-						isInResults = true
+			if returnStmt != nil {
+				for _, result := range returnStmt.Results {
+					compareComposite, ok := result.(*ast.CompositeLit)
+					if ok {
+						if compareComposite == compositeLit {
+							isInResults = true
+						}
 					}
 				}
 			}
