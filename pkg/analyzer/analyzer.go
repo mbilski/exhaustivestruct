@@ -153,13 +153,18 @@ func run(pass *analysis.Pass) (interface{}, error) {
 				continue
 			}
 
-			for _, e := range compositeLit.Elts {
+			for eIndex, e := range compositeLit.Elts {
 				if k, ok := e.(*ast.KeyValueExpr); ok {
 					if i, ok := k.Key.(*ast.Ident); ok {
 						if i.Name == fieldName {
 							exists = true
 							break
 						}
+					}
+				} else {
+					if eIndex == i {
+						exists = true
+						break
 					}
 				}
 			}
