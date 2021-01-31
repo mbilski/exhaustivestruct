@@ -43,6 +43,7 @@ func shouldPass2() Test2 {
 			E: "",
 			F: "",
 			H: "",
+			g: "",
 		},
 	}
 }
@@ -54,6 +55,10 @@ func shouldPassWithReturn() (Test, error) {
 func shouldPass3() {
 	// Checking to make sure state from tracking the previous return statement doesn't affect this struct
 	_ = Test{} // want "A, B, C, D are missing in Test"
+}
+
+func shouldPassWithoutNames() Test {
+	return Test{"", 0, 0, false}
 }
 
 func shouldFailWithReturn() (Test, error) {
@@ -84,7 +89,7 @@ func unchecked() {
 
 func shouldFailOnEmbedded() Test2 {
 	return Test2{
-		Embedded: Embedded{ // want "E, H are missing in Embedded"
+		Embedded: Embedded{ // want "E, g, H are missing in Embedded"
 			F: "",
 		},
 		External: e.External{
@@ -103,6 +108,7 @@ func shoildFailOnExternal() Test2 {
 			E: "",
 			F: "",
 			H: "",
+			g: "",
 		},
 	}
 }

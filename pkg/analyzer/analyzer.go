@@ -143,13 +143,15 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			}
 		}
 
+		samePackage := strings.HasPrefix(t.String(), pass.Pkg.Path()+".")
+
 		missing := []string{}
 
 		for i := 0; i < str.NumFields(); i++ {
 			fieldName := str.Field(i).Name()
 			exists := false
 
-			if !str.Field(i).Exported() {
+			if !samePackage && !str.Field(i).Exported() {
 				continue
 			}
 
