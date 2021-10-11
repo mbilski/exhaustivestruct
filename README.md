@@ -20,7 +20,9 @@ Usage: exhaustivestruct [-flag] [package]
 
 Flags:
   -struct_patterns string
-      This is a comma separated list of expressions to match struct packages and names
+      Comma separated list of expressions to match struct packages and names
+  -exclude string
+      Comma separated list of expressions to exclude struct packages and names from check
 ```
 
 ## Example
