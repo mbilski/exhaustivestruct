@@ -1,21 +1,33 @@
 package analyzer_test
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/mbilski/exhaustivestruct/pkg/analyzer"
 	"golang.org/x/tools/go/analysis/analysistest"
+
+	"github.com/mbilski/exhaustivestruct/pkg/analyzer"
 )
 
-func TestAll(t *testing.T) {
-	wd, err := os.Getwd()
+func abs(path string) string {
+	s, err := filepath.Abs(path)
 	if err != nil {
-		t.Fatalf("Failed to get wd: %s", err)
+		panic(err)
 	}
+	return s
+}
 
-	testdata := filepath.Join(filepath.Dir(filepath.Dir(wd)), "testdata")
-	analyzer.StructPatternList = "*.Test,*.Test2,*.Embedded,*.External"
-	analysistest.Run(t, testdata, analyzer.Analyzer, "s")
+func TestBasic(t *testing.T) {
+	analysistest.Run(t, abs("../../testdata"), analyzer.Analyzer, "basic")
+}
+
+func TestPatternList(t *testing.T) {
+	analyzer.StructPatternList = "*.Checked,*.AnotherChecked"
+	analysistest.Run(t, abs("../../testdata"), analyzer.Analyzer, "patternconfig")
+	analyzer.StructPatternList = ""
+}
+
+func TestInterfaceImpl(t *testing.T) {
+	analyzer.StructPatternList = ""
+	analysistest.Run(t, abs("../../testdata"), analyzer.Analyzer, "interfaceimpl")
 }
