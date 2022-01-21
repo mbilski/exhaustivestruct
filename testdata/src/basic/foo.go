@@ -25,8 +25,41 @@ type NestStruct struct {
 	External e.External
 }
 
+type DefStruct FlatStruct
+
+type DeepDefStruct DefStruct
+
+type AliasStruct = FlatStruct
+
 func returnFlatNoMissingFields() FlatStruct {
 	return FlatStruct{
+		A: "a",
+		B: 1,
+		C: 0.0,
+		D: false,
+	}
+}
+
+func returnDefNoMissingFields() DefStruct {
+	return DefStruct{
+		A: "a",
+		B: 1,
+		C: 0.0,
+		D: false,
+	}
+}
+
+func returnDeepDefNoMissingFields() DeepDefStruct {
+	return DeepDefStruct{
+		A: "a",
+		B: 1,
+		C: 0.0,
+		D: false,
+	}
+}
+
+func returnAliasNoMissingFields() AliasStruct {
+	return AliasStruct{
 		A: "a",
 		B: 1,
 		C: 0.0,
@@ -64,6 +97,18 @@ func assignEmptyStruct() {
 
 func returnEmptyStruct() FlatStruct {
 	return FlatStruct{} // want "A, B, C, D are missing in FlatStruct"
+}
+
+func returnEmptyDefStruct() DefStruct {
+	return DefStruct{} // want "A, B, C, D are missing in DefStruct"
+}
+
+func returnEmptyDeepDefStruct() DeepDefStruct {
+	return DeepDefStruct{} // want "A, B, C, D are missing in DeepDefStruct"
+}
+
+func returnEmptyAliasStruct() AliasStruct {
+	return AliasStruct{} // want "A, B, C, D are missing in AliasStruct"
 }
 
 func returnNoNames() FlatStruct {

@@ -9,8 +9,8 @@ import (
 	"github.com/mbilski/exhaustivestruct/pkg/analyzer"
 )
 
-func abs(path string) string {
-	s, err := filepath.Abs(path)
+func testdata() string {
+	s, err := filepath.Abs("../../testdata")
 	if err != nil {
 		panic(err)
 	}
@@ -18,16 +18,16 @@ func abs(path string) string {
 }
 
 func TestBasic(t *testing.T) {
-	analysistest.Run(t, abs("../../testdata"), analyzer.Analyzer, "basic")
+	analysistest.Run(t, testdata(), analyzer.Analyzer, "basic")
 }
 
 func TestPatternList(t *testing.T) {
 	analyzer.StructPatternList = "*.Checked,*.AnotherChecked"
-	analysistest.Run(t, abs("../../testdata"), analyzer.Analyzer, "patternconfig")
+	analysistest.Run(t, testdata(), analyzer.Analyzer, "patternconfig")
 	analyzer.StructPatternList = ""
 }
 
 func TestInterfaceImpl(t *testing.T) {
 	analyzer.StructPatternList = ""
-	analysistest.Run(t, abs("../../testdata"), analyzer.Analyzer, "interfaceimpl")
+	analysistest.Run(t, testdata(), analyzer.Analyzer, "interfaceimpl")
 }
